@@ -1,0 +1,17 @@
+# Profile Template for Clash Verge
+
+proxies:
+  - name: "Shadowsocks-Server"
+    type: ss
+    server: "YOUR_SERVER_IP_ADDRESS"
+    port: 8388
+    cipher: "aes-256-gcm"
+    password: "YOUR_PASSWORD_HERE"
+
+proxy-groups: []
+
+rules:
+  - DOMAIN-SUFFIX,google.com,Shadowsocks-Server
+  - DOMAIN-KEYWORD,facebook,Shadowsocks-Server
+  - GEOIP,CN,DIRECT
+  - MATCH,Shadowsocks-Server
