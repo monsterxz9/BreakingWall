@@ -1,16 +1,15 @@
-```markdown
 # BreakingWall
 
 BreakingWall is an automated script designed to quickly configure and start a Shadowsocks proxy server. This script will install Docker, create a Shadowsocks configuration file, and start a Shadowsocks server container.
 
-## Quick Start
 
-### Prerequisites
+
+## Prerequisites
 
 - You need `sudo` privileges to install software and execute the script.
 - Ensure your system can access the internet to download the script from GitHub.
 
-### Usage
+## Usage
 
 1. **Run the Script**
 
@@ -63,7 +62,7 @@ BreakingWall is an automated script designed to quickly configure and start a Sh
 
    - **Check Clash Verge**: Ensure Clash Verge is properly configured and running with the updated `config.yaml`.
 
-### Configuration File Explanation
+## Configuration File Explanation
 
 - **`proxies`**: Defines the Shadowsocks proxy with the necessary connection details.
 - **`proxy-groups`**: (Empty in this template) Allows you to define groups of proxies for more advanced routing.
@@ -72,16 +71,16 @@ BreakingWall is an automated script designed to quickly configure and start a Sh
   - `GEOIP` rule routes traffic from China directly without using the proxy.
   - `MATCH` rule routes all other traffic through the Shadowsocks server.
 
-### License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Support
 
 If you encounter any issues or have questions, please submit feedback via GitHub Issues, and we will address them as soon as possible.
-```
 
-### Summary of Additions:
+
+## Summary of Additions:
 - **Clash Verge Configuration**: Instructions for setting up the Clash Verge configuration file.
 - **Configuration File Explanation**: A brief description of what each section in the `config.yaml` does.
 - **Verify the Setup**: Instructions on how to check that both Docker and Clash Verge are running correctly.
