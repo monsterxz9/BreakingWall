@@ -1,17 +1,59 @@
-# Profile Template for Clash Verge
+# Clash Meta (mihomo) / Clash Verge Rev 客户端配置
+# 将 YOUR_* 替换为服务器部署后输出的实际值
 
 proxies:
-  - name: "Shadowsocks-Server"
-    type: ss
-    server: "YOUR_SERVER_IP_ADDRESS"
-    port: 8388
-    cipher: "aes-256-gcm"
-    password: "YOUR_PASSWORD_HERE"
+  - name: "Xray-REALITY"
+    type: vless
+    server: YOUR_SERVER_IP
+    port: 443
+    uuid: YOUR_UUID
+    network: tcp
+    udp: true
+    tls: true
+    flow: xtls-rprx-vision
+    servername: cloudflare.com
+    reality-opts:
+      public-key: YOUR_PUBLIC_KEY
+      short-id: YOUR_SHORT_ID
+    client-fingerprint: chrome
 
-proxy-groups: []
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    proxies:
+      - Xray-REALITY
+      - DIRECT
+
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+  direct:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
 
 rules:
-  - DOMAIN-SUFFIX,google.com,Shadowsocks-Server
-  - DOMAIN-KEYWORD,facebook,Shadowsocks-Server
+  - RULE-SET,reject,REJECT
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,proxy,Proxy
+  - RULE-SET,cncidr,DIRECT
   - GEOIP,CN,DIRECT
-  - MATCH,Shadowsocks-Server
+  - MATCH,Proxy

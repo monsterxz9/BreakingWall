@@ -1,88 +1,85 @@
 # BreakingWall
 
-BreakingWall is an automated script designed to quickly configure and start a Shadowsocks proxy server. This script will install Docker, create a Shadowsocks configuration file, and start a Shadowsocks server container.
+Xray VLESS+REALITY 一键部署与客户端配置方案。
 
+**协议**: VLESS | **传输**: TCP | **安全层**: REALITY | **伪装**: cloudflare.com
 
+相比传统 Shadowsocks，VLESS+REALITY 无需域名和证书，流量特征与正常 TLS 访问无异，抗检测能力极强。
 
-## Prerequisites
+## 文件说明
 
-- You need `sudo` privileges to install software and execute the script.
-- Ensure your system can access the internet to download the script from GitHub.
+| 文件 | 用途 |
+|------|------|
+| `ServerScript.sh` | 服务端一键部署脚本 |
+| `Client.yaml` | Clash Meta / Clash Verge Rev 客户端配置 |
+| `client-config.json` | Xray / v2rayN 原生客户端配置 |
 
-## Usage
+## 服务端部署
 
-1. **Run the Script**
+**环境要求**: Linux (Ubuntu/Debian/CentOS) + root 权限
 
-   Use the following command to download and execute the script from GitHub:
+```bash
+curl -sL https://raw.githubusercontent.com/monsterxz9/BreakingWall/main/ServerScript.sh | sudo bash
+```
 
-   ```bash
-   curl -sL https://raw.githubusercontent.com/monsterxz9/BreakingWall/main/ServerScript.sh | sudo bash
-   ```
+脚本会自动完成：
+- 安装 Xray
+- 生成 UUID、x25519 密钥对、Short ID
+- 写入 VLESS+REALITY 配置
+- 启动 systemd 服务
+- 输出客户端所需的连接信息
 
-   This command will automatically:
-   - Update package lists
-   - Install Docker
-   - Create a Shadowsocks configuration file
-   - Start the Shadowsocks server container
+部署完成后会打印如下信息，请妥善保存：
 
-2. **Configure Clash Verge**
+```
+  服务器地址:  xxx.xxx.xxx.xxx
+  端口:        443
+  UUID:        xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  Public Key:  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  Short ID:    xxxxxxxxxxxxxxxx
+```
 
-   After setting up your Shadowsocks server, you need to configure Clash Verge to use it. Create or edit your Clash Verge configuration file (`config.yaml`) with the following content:
+## 客户端配置
 
-   ```yaml
-   # Profile Template for Clash Verge
+### Clash Meta / Clash Verge Rev
 
-   proxies:
-     - name: "Shadowsocks-Server"
-       type: ss
-       server: "YOUR_SERVER_IP_ADDRESS"
-       port: 8388
-       cipher: "aes-256-gcm"
-       password: "YOUR_PASSWORD_HERE"
+1. 复制 `Client.yaml` 内容
+2. 将 `YOUR_SERVER_IP`、`YOUR_UUID`、`YOUR_PUBLIC_KEY`、`YOUR_SHORT_ID` 替换为服务端输出的实际值
+3. 导入到 Clash Verge Rev 的 Profiles 中
 
-   proxy-groups: []
+### v2rayN / Xray 原生客户端
 
-   rules:
-     - DOMAIN-SUFFIX,google.com,Shadowsocks-Server
-     - DOMAIN-KEYWORD,facebook,Shadowsocks-Server
-     - GEOIP,CN,DIRECT
-     - MATCH,Shadowsocks-Server
-   ```
+1. 复制 `client-config.json` 内容
+2. 替换 `YOUR_*` 占位符
+3. 导入到 v2rayN 或直接用 `xray run -c client-config.json` 启动
 
-   - Replace `YOUR_SERVER_IP_ADDRESS` with the IP address of your Shadowsocks server.
-   - Replace `YOUR_PASSWORD_HERE` with the password you set for your Shadowsocks server.
+### Shadowrocket (iOS)
 
-3. **Verify the Setup**
+手动添加节点：
+- 类型: VLESS
+- 地址 / 端口: `YOUR_SERVER_IP` / `443`
+- UUID: `YOUR_UUID`
+- TLS: REALITY
+- SNI: `cloudflare.com`
+- Public Key / Short ID: 对应值
+- Flow: `xtls-rprx-vision`
 
-   - **Check Docker Container**: Verify that the Shadowsocks server container is running:
+## 管理命令
 
-     ```bash
-     sudo docker ps
-     ```
+```bash
+# 查看服务状态
+systemctl status xray
 
-   - **Check Clash Verge**: Ensure Clash Verge is properly configured and running with the updated `config.yaml`.
+# 查看日志
+journalctl -u xray -n 30 --no-pager
 
-## Configuration File Explanation
+# 重启服务
+systemctl restart xray
 
-- **`proxies`**: Defines the Shadowsocks proxy with the necessary connection details.
-- **`proxy-groups`**: (Empty in this template) Allows you to define groups of proxies for more advanced routing.
-- **`rules`**: Defines routing rules for different types of traffic:
-  - `DOMAIN-SUFFIX` and `DOMAIN-KEYWORD` rules route specific traffic through the Shadowsocks server.
-  - `GEOIP` rule routes traffic from China directly without using the proxy.
-  - `MATCH` rule routes all other traffic through the Shadowsocks server.
+# 查看配置
+cat /usr/local/etc/xray/config.json
+```
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Support
-
-If you encounter any issues or have questions, please submit feedback via GitHub Issues, and we will address them as soon as possible.
-
-
-## Summary of Additions:
-- **Clash Verge Configuration**: Instructions for setting up the Clash Verge configuration file.
-- **Configuration File Explanation**: A brief description of what each section in the `config.yaml` does.
-- **Verify the Setup**: Instructions on how to check that both Docker and Clash Verge are running correctly.
-
-Feel free to adjust or add any specific details relevant to your project.
+MIT License. See [LICENSE](LICENSE) for details.
